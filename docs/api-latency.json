@@ -1,0 +1,38 @@
+{
+  "catalogCount": 7861,
+  "initialCatalogMs": 317,
+  "cases": [
+    {
+      "target": "100.01",
+      "candidateLimit": 100,
+      "roundTripMs": 344,
+      "calculationMs": 100.2,
+      "serverMs": 189,
+      "delta": 0
+    },
+    {
+      "target": "137.19",
+      "candidateLimit": 200,
+      "roundTripMs": 144,
+      "calculationMs": 97,
+      "serverMs": 98,
+      "delta": 0
+    },
+    {
+      "target": "500",
+      "candidateLimit": 200,
+      "roundTripMs": 248,
+      "calculationMs": 182.5,
+      "serverMs": 184,
+      "delta": 0
+    },
+    {
+      "target": "5000",
+      "candidateLimit": 200,
+      "roundTripMs": 468,
+      "calculationMs": 399.1,
+      "serverMs": 401,
+      "delta": 0
+    }
+  ]
+}

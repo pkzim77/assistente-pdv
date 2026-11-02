@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-31T11:01:50.967Z",
+  "catalogCount": 7861,
+  "cases": [
+    {
+      "target": "50.01",
+      "total": 5001,
+      "lines": 2,
+      "units": 8,
+      "ms": 233.7,
+      "timedOut": false,
+      "exact": true
+    },
+    {
+      "target": "100",
+      "total": 10000,
+      "lines": 1,
+      "units": 2,
+      "ms": 70.6,
+      "timedOut": false,
+      "exact": true
+    },
+    {
+      "target": "137.19",
+      "total": 13719,
+      "lines": 1,
+      "units": 5,
+      "ms": 84.1,
+      "timedOut": false,
+      "exact": true
+    },
+    {
+      "target": "500",
+      "total": 50000,
+      "lines": 2,
+      "units": 7,
+      "ms": 701.1,
+      "timedOut": true,
+      "exact": true
+    },
+    {
+      "target": "1000",
+      "total": 100000,
+      "lines": 2,
+      "units": 20,
+      "ms": 540.7,
+      "timedOut": false,
+      "exact": true
+    },
+    {
+      "target": "5000",
+      "total": 500000,
+      "lines": 4,
+      "units": 127,
+      "ms": 605.5,
+      "timedOut": false,
+      "exact": true
+    }
+  ]
+}

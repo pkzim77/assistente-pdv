@@ -1,0 +1,162 @@
+{
+  "method": "Win32 read-only enumeration",
+  "windows": [
+    {
+      "title": "PDV-FISCAL",
+      "class": "TFVendas",
+      "process_id": 8876,
+      "rectangle": [
+        0,
+        0,
+        1366,
+        728
+      ],
+      "controls": [
+        {
+          "class": "TAdvSmoothExpanderPanel",
+          "label": "",
+          "rectangle": [
+            24,
+            273,
+            317,
+            368
+          ],
+          "control_id": 461052
+        },
+        {
+          "class": "TArpaEditConsultaDados",
+          "label": "",
+          "rectangle": [
+            33,
+            321,
+            304,
+            344
+          ],
+          "control_id": 329982
+        },
+        {
+          "class": "TAdvSmoothExpanderPanel",
+          "label": "",
+          "rectangle": [
+            24,
+            149,
+            317,
+            244
+          ],
+          "control_id": 592384
+        },
+        {
+          "class": "TEditArpa",
+          "label": "",
+          "rectangle": [
+            33,
+            197,
+            304,
+            220
+          ],
+          "control_id": 198970
+        },
+        {
+          "class": "TEditArpa",
+          "label": "",
+          "rectangle": [
+            352,
+            64,
+            1322,
+            99
+          ],
+          "control_id": 395608
+        },
+        {
+          "class": "TAdvSmoothExpanderPanel",
+          "label": "",
+          "rectangle": [
+            24,
+            399,
+            317,
+            494
+          ],
+          "control_id": 1313212
+        },
+        {
+          "class": "TEditArpa",
+          "label": "",
+          "rectangle": [
+            33,
+            447,
+            304,
+            470
+          ],
+          "control_id": 1574952
+        },
+        {
+          "class": "TAdvSmoothExpanderPanel",
+          "label": "",
+          "rectangle": [
+            24,
+            524,
+            317,
+            619
+          ],
+          "control_id": 330188
+        },
+        {
+          "class": "TEditArpa",
+          "label": "",
+          "rectangle": [
+            33,
+            572,
+            304,
+            595
+          ],
+          "control_id": 395616
+        },
+        {
+          "class": "TAdvSmoothPanel",
+          "label": "",
+          "rectangle": [
+            339,
+            51,
+            1335,
+            113
+          ],
+          "control_id": 395738
+        },
+        {
+          "class": "TAdvSmoothPanel",
+          "label": "",
+          "rectangle": [
+            842,
+            646,
+            1336,
+            692
+          ],
+          "control_id": 264442
+        },
+        {
+          "class": "TAdvSmoothPanel",
+          "label": "",
+          "rectangle": [
+            339,
+            149,
+            1335,
+            619
+          ],
+          "control_id": 591948
+        }
+      ]
+    },
+    {
+      "title": "PDV - Control",
+      "class": "TApplication",
+      "process_id": 8876,
+      "rectangle": [
+        683,
+        384,
+        683,
+        384
+      ],
+      "controls": []
+    }
+  ]
+}
