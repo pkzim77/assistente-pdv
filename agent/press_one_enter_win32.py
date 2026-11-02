@@ -6,6 +6,7 @@ import time
 from ctypes import wintypes
 
 from inspect_pdv_win32 import inspect
+from pdv_config import is_sale_window
 
 EXPECTED = "VESTIDO FEMININO INFANTIL (GR 4/8) - 251687"
 ALLOWED = {"7306", "12501687", EXPECTED}
@@ -13,8 +14,7 @@ ALLOWED = {"7306", "12501687", EXPECTED}
 
 def read_sale():
     snapshot = inspect()
-    sales = [w for w in snapshot["windows"]
-             if w["title"] == "PDV-FISCAL" and w["class"] == "TFVendas"]
+    sales = [w for w in snapshot["windows"] if is_sale_window(w)]
     if len(sales) != 1:
         raise RuntimeError("A janela PDV-FISCAL não está única; nenhum Enter enviado.")
     sale = sales[0]

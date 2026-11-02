@@ -1,12 +1,12 @@
 """Abre o PDV-Fiscal se ainda não houver processo; não autentica nem vende."""
 import ctypes
 import json
-import os
 import subprocess
 import sys
 import time
 from ctypes import wintypes
 from pathlib import Path
+from pdv_config import PDV_EXE, PDV_PROCESS_NAME, is_sale_window, is_closing_title
 
 
 def pdv_processes():
@@ -40,7 +40,7 @@ def pdv_processes():
         entry.dwSize = ctypes.sizeof(entry)
         more = kernel32.Process32FirstW(snapshot, ctypes.byref(entry))
         while more:
-            if entry.szExeFile.casefold() == "pdv.exe":
+            if entry.szExeFile.casefold() == PDV_PROCESS_NAME.casefold():
                 found.append({"pid": int(entry.th32ProcessID), "name": entry.szExeFile})
             more = kernel32.Process32NextW(snapshot, ctypes.byref(entry))
     finally:
@@ -57,10 +57,9 @@ def launch():
         from restore_pdv_win32 import restore
 
         snapshot = inspect()
-        sales = [window for window in snapshot["windows"]
-                 if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+        sales = [window for window in snapshot["windows"] if is_sale_window(window)]
         closings = [window for window in snapshot["windows"]
-                    if "FECHAMENTO DE VENDA" in window["title"].upper()]
+                    if is_closing_title(window["title"])]
         restored = False
         restore_message = None
         if len(sales) == 1 and not closings and \
@@ -71,10 +70,9 @@ def launch():
             except Exception as error:
                 restore_message = str(error)
             snapshot = inspect()
-            sales = [window for window in snapshot["windows"]
-                     if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+            sales = [window for window in snapshot["windows"] if is_sale_window(window)]
             closings = [window for window in snapshot["windows"]
-                        if "FECHAMENTO DE VENDA" in window["title"].upper()]
+                        if is_closing_title(window["title"])]
 
         required = ("quantity", "product_search", "sale_price", "line_total")
         from pdv_geometry import layout_diagnostics
@@ -114,8 +112,7 @@ def launch():
                                                if control["role"] == role) == 1],
                 "processes": active, "message": message}
 
-    executable = Path(os.environ.get(
-        "PDV_EXE", r"C:\Program Files (x86)\arpa\control\pdv.exe"))
+    executable = Path(PDV_EXE)
     if not executable.is_file():
         raise RuntimeError("PDV_EXE não aponta para um executável existente: " + str(executable))
     # A API chama este auxiliar com windowsHide=True. Repassamos explicitamente

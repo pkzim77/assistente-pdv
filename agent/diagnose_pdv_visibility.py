@@ -2,6 +2,7 @@
 import ctypes
 import json
 from ctypes import wintypes
+from pdv_config import PDV_WINDOW_CLASS, PDV_CLOSING_CLASS, PDV_AUX_WINDOW_CLASSES
 
 user32 = ctypes.WinDLL("user32", use_last_error=True)
 EnumProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
@@ -51,7 +52,8 @@ def top_level(hwnd, _):
     user32.GetWindowTextW(hwnd, title, len(title))
     kind = ctypes.create_unicode_buffer(256)
     user32.GetClassNameW(hwnd, kind, len(kind))
-    if pid.value == target and kind.value in {"TFVendas", "TFSplashScreen", "TParentForm", "TFecha_Venda"}:
+    if pid.value == target and kind.value in {
+            PDV_WINDOW_CLASS, PDV_CLOSING_CLASS, *PDV_AUX_WINDOW_CLASSES}:
         row = info(hwnd)
         row["children"] = []
         windows.append(row)

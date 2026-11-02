@@ -1,8 +1,10 @@
 """Inspeção somente leitura. Não abre caixa, digita, clica ou emite notas."""
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
+from pdv_config import relevant_window_titles
 
 # Bibliotecas locais instaladas pelo bootstrap; também funciona em virtualenv.
 local_lib = Path(__file__).resolve().parents[1] / '.tools' / 'python-libs'
@@ -17,11 +19,11 @@ if local_lib.exists():
 
 def inspect(backend):
     from pywinauto import Desktop
-    # A tela de entrada usa o título "CUPOM FISCAL"; as telas seguintes usam
-    # PDV-FISCAL/Fechamento de Venda. O nome dos controles Edit é omitido para
+    # Os títulos de janela vêm da configuração local. O nome dos controles Edit é omitido para
     # não copiar conteúdo de campos que possam conter dados sensíveis.
+    title_pattern = ".*(" + "|".join(re.escape(title) for title in relevant_window_titles()) + ").*"
     windows = Desktop(backend=backend).windows(
-        title_re=r'.*(PDV-FISCAL|CUPOM FISCAL|Fechamento de Venda).*'
+        title_re=title_pattern
     )
     if not windows:
         raise RuntimeError('Abra o PDV e entre manualmente antes da inspeção.')

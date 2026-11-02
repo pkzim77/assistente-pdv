@@ -8,18 +8,18 @@ from inspect_pdv_win32 import inspect, search_product
 from pdv_geometry import require_safe_layout
 from press_two_enter_win32 import press_two
 from type_quantity_win32 import type_quantity, valid_quantity_text
+from pdv_config import is_sale_window, is_closing_title
 
 
 def sale_window(snapshot):
-    sales = [window for window in snapshot.get("windows", [])
-             if window.get("title") == "PDV-FISCAL" and window.get("class") == "TFVendas"]
+    sales = [window for window in snapshot.get("windows", []) if is_sale_window(window)]
     if len(sales) != 1:
         raise RuntimeError("Não há uma única janela de venda acessível; nenhuma tecla enviada.")
     sale = sales[0]
     require_safe_layout(sale)
     if not sale.get("visible") or sale.get("minimized"):
         raise RuntimeError("A tela de venda está oculta ou minimizada; nenhuma tecla enviada.")
-    if any("FECHAMENTO DE VENDA" in window.get("title", "").upper()
+    if any(is_closing_title(window.get("title", ""))
            for window in snapshot.get("windows", [])):
         raise RuntimeError("O fechamento está aberto; retorne à venda antes de iniciar.")
     return sale

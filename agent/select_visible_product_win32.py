@@ -8,6 +8,7 @@ from ctypes import wintypes
 
 from inspect_pdv_win32 import inspect
 from pdv_geometry import require_safe_layout
+from pdv_config import is_sale_window
 
 
 DEFAULT_ITEM = {"id": 7306, "reference": "12501687",
@@ -31,8 +32,7 @@ def select_target(item=None):
     references = {product_code, str(item.get("reference") or "").strip(),
                   str(item["description"]).strip()}
     snapshot = inspect()
-    sales = [w for w in snapshot["windows"]
-             if w["title"] == "PDV-FISCAL" and w["class"] == "TFVendas"]
+    sales = [w for w in snapshot["windows"] if is_sale_window(w)]
     if len(sales) != 1:
         raise RuntimeError("É necessário exatamente uma janela PDV-FISCAL visível.")
     sale = sales[0]
@@ -87,8 +87,7 @@ def select_target(item=None):
     time.sleep(0.3)
 
     after = inspect()
-    sales_after = [w for w in after["windows"]
-                   if w["title"] == "PDV-FISCAL" and w["class"] == "TFVendas"]
+    sales_after = [w for w in after["windows"] if is_sale_window(w)]
     fields = {c["role"]: c.get("value", "") for w in sales_after
               for c in w["controls"]
               if c["role"] in {"quantity", "product_search", "sale_price", "line_total"}}

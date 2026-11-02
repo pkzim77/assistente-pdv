@@ -8,14 +8,14 @@ from ctypes import wintypes
 from inspect_pdv_win32 import inspect
 from pdv_geometry import require_safe_layout
 from restore_pdv_win32 import restore
+from pdv_config import is_sale_window
 
 
 def type_code():
     if sys.platform != "win32":
         raise RuntimeError("Esta ação só funciona no Windows.")
     snapshot = inspect()
-    sales = [w for w in snapshot["windows"]
-             if w["title"] == "PDV-FISCAL" and w["class"] == "TFVendas"]
+    sales = [w for w in snapshot["windows"] if is_sale_window(w)]
     if len(sales) != 1:
         raise RuntimeError("Não há uma única tela PDV-FISCAL; código não digitado.")
     sale = sales[0]
@@ -101,8 +101,7 @@ def type_code():
         time.sleep(0.03)
     time.sleep(0.3)
     after = inspect()
-    result = [w for w in after["windows"]
-              if w["title"] == "PDV-FISCAL" and w["class"] == "TFVendas"]
+    result = [w for w in after["windows"] if is_sale_window(w)]
     fields_after = {c["role"]: c.get("value", "") for w in result for c in w["controls"]
                     if c["role"] in {"product_search", "quantity", "sale_price", "line_total"}}
     return {"ok": True, "typed": fields_after.get("product_search") == "7306",

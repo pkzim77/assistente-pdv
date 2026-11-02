@@ -6,6 +6,7 @@ import time
 from ctypes import wintypes
 
 from inspect_pdv_win32 import inspect
+from pdv_config import PDV_CLOSING_CLASS, is_closing_title
 
 
 def show_closing():
@@ -13,8 +14,8 @@ def show_closing():
         raise RuntimeError("Esta ação só funciona no Windows.")
     snapshot = inspect()
     dialogs = [window for window in snapshot["windows"]
-               if window["class"] == "TFecha_Venda" and
-               "FECHAMENTO DE VENDA" in window["title"].upper()]
+               if window["class"] == PDV_CLOSING_CLASS and
+               is_closing_title(window["title"])]
     if len(dialogs) != 1:
         raise RuntimeError("Não encontrei uma única janela de fechamento; nada foi ativado.")
 

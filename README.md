@@ -20,7 +20,26 @@ Requer Node 22+ e Python 3.12 no Windows para o agente.
     npm run build
     npm start
 
-Copie .env.example para .env se precisar ajustar a conexão. Nunca salve senhas no código. Com Node 22+, os scripts carregam .env automaticamente quando existir.
+Copie `.env.example` para `.env` em cada computador e preencha os dados daquele estabelecimento. O `.env` é ignorado pelo Git; nunca publique credenciais nele. Com Node 22+, o servidor carrega as demais opções automaticamente. O inicializador também lê de `.env` os caminhos de Node/Python e a porta para mostrar a URL correta.
+
+### Preparar em outro estabelecimento
+
+Revise no `.env` os campos abaixo antes de iniciar:
+
+| Variável | Quando alterar |
+| --- | --- |
+| `PDV_EXE` | Caminho completo do executável instalado nesse computador; usado pelo botão **Iniciar PDV**. |
+| `PDV_PROCESS_NAME` | Só se o processo em execução tiver nome diferente do executável. |
+| `PDV_WINDOW_TITLE`, `PDV_WINDOW_CLASS` | Só se a janela principal do PDV tiver identificação diferente. |
+| `PDV_LOGIN_TITLE`, `PDV_CLOSING_TITLE`, `PDV_CLOSING_CLASS`, `PDV_OTHER_WINDOW_TITLES`, `PDV_AUX_WINDOW_CLASSES` | Só se os títulos/classes das janelas forem diferentes; listas separadas por vírgula. |
+| `PDV_PYTHON`, `NODE_EXE` | Caminhos dos runtimes quando Python/Node não forem encontrados no `PATH`. |
+| `ARPA_HOST`, `ARPA_PORT`, `ARPA_DATABASE`, `ARPA_SCHEMA`, `ARPA_USER`, `ARPA_PASSWORD` | Endereço e credenciais da instalação PostgreSQL do Arpa. Use uma conta do Arpa restrita a leitura. |
+| `ARPA_CONNECTION_TIMEOUT_MS`, `ARPA_QUERY_TIMEOUT_MS` | Aumente apenas se a conexão remota do estabelecimento precisar de mais tempo; os valores têm limite para evitar esperas sem fim. |
+| `PORT` | Porta local do painel se 4318 estiver ocupada. Continua acessível somente pelo próprio computador. |
+| `ROBOT_DATA_DIR` | Pasta local dos eventos, se quiser separar os dados desse estabelecimento. |
+| `ROBOT_DATABASE_URL` | Opcional: banco próprio `pdv_robo` para histórico compartilhado/persistente; nunca usar o banco operacional do Arpa. |
+
+Os nomes e estruturas das tabelas/campos do Arpa, a classificação de produto ativo, o tipo de baixa, as unidades aceitas e os critérios de lote/série continuam sendo regras do adaptador em código. Se a outra instalação usar versão ou regras diferentes, valide o mapeamento antes de habilitar o uso; não tente resolver isso mudando apenas `.env`. O painel permanece vinculado a `127.0.0.1` de propósito e não deve ser exposto à rede.
 
 Para desenvolvimento do painel: API com npm run dev e Vite com npx vite (porta padrão 5173, proxy da API). Para executar os testes: npm test.
 

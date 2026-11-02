@@ -8,6 +8,7 @@ from decimal import Decimal
 
 from inspect_pdv_win32 import inspect
 from pdv_geometry import require_safe_layout
+from pdv_config import is_sale_window
 
 
 EXPECTED_DESCRIPTION = "VESTIDO FEMININO INFANTIL (GR 4/8) - 251687"
@@ -21,8 +22,7 @@ DEFAULT_ITEM = {"id": 7306, "reference": FACTORY_REFERENCE,
 
 def read_sale():
     snapshot = inspect()
-    sales = [w for w in snapshot["windows"]
-             if w["title"] == "PDV-FISCAL" and w["class"] == "TFVendas"]
+    sales = [w for w in snapshot["windows"] if is_sale_window(w)]
     if len(sales) != 1:
         raise RuntimeError("A janela de venda do PDV deixou de estar única; sequência interrompida.")
     sale = sales[0]

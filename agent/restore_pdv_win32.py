@@ -6,13 +6,13 @@ import time
 from ctypes import wintypes
 
 from inspect_pdv_win32 import inspect
+from pdv_config import is_sale_window
 
 
 def restore():
     if sys.platform != "win32":
         raise RuntimeError("Esta ação só funciona no Windows.")
-    windows = [window for window in inspect()["windows"]
-               if window["class"] == "TFVendas" and window["title"] == "PDV-FISCAL"]
+    windows = [window for window in inspect()["windows"] if is_sale_window(window)]
     if len(windows) != 1:
         raise RuntimeError("Não encontrei uma única janela principal do PDV; nada foi ativado.")
     hwnd_value = windows[0]["hwnd"]

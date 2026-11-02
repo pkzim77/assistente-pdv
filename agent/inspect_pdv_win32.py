@@ -7,6 +7,8 @@ import struct
 import time
 from ctypes import wintypes
 from pathlib import Path
+from pdv_config import (PDV_PROCESS_NAME, PDV_WINDOW_TITLE, PDV_WINDOW_CLASS,
+                        relevant_window_titles, is_sale_window)
 
 
 def capture_window_bmp(hwnd_value, output_path):
@@ -204,7 +206,7 @@ def inspect():
             if not kernel32.QueryFullProcessImageNameW(process, 0, buffer,
                                                         ctypes.byref(size)):
                 return False
-            return Path(buffer.value).name.casefold() == "pdv.exe"
+            return Path(buffer.value).name.casefold() == PDV_PROCESS_NAME.casefold()
         finally:
             kernel32.CloseHandle(process)
 
@@ -228,7 +230,7 @@ def inspect():
             return "sale_items_area"
         return "unknown"
 
-    expected = ("CUPOM FISCAL", "PDV-FISCAL", "PDV - CONTROL", "FECHAMENTO DE VENDA")
+    expected = tuple(title.upper() for title in relevant_window_titles())
     windows = []
 
     @enum_proc
@@ -271,7 +273,7 @@ def inspect():
         # Os três TEditArpa habilitados na coluna esquerda são, em ordem
         # vertical, Quantidade, Preço de venda e Total. Ordenar os controles
         # visíveis evita depender de pixels ou da resolução usada na abertura.
-        if class_name(hwnd) == "TFVendas" and title == "PDV-FISCAL" and parent_rect:
+        if class_name(hwnd) == PDV_WINDOW_CLASS and title == PDV_WINDOW_TITLE and parent_rect:
             parent_width = parent_rect[2] - parent_rect[0]
             left_edits = []
             if parent_width > 0:
@@ -337,8 +339,7 @@ def search_product(query):
     deadline = time.monotonic() + 8
     while time.monotonic() < deadline:
         before = inspect()
-        sales = [window for window in before["windows"]
-                 if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+        sales = [window for window in before["windows"] if is_sale_window(window)]
         fields_ready = (len(sales) == 1 and
                         sum(1 for c in sales[0]["controls"] if c["role"] == "product_search") == 1)
         if fields_ready:
@@ -447,8 +448,7 @@ def search_product(query):
         time.sleep(0.03)
     time.sleep(0.2)
     after = inspect()
-    final_sales = [window for window in after["windows"]
-                   if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+    final_sales = [window for window in after["windows"] if is_sale_window(window)]
     if len(final_sales) != 1:
         raise RuntimeError("A janela do PDV mudou durante a digitação; produto não confirmado.")
     final_controls = final_sales[0]["controls"]

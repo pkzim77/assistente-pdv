@@ -11,8 +11,13 @@ import {createHistory} from './history.js';
 import {transition} from './workflow.js';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const port=Number(process.env.PORT||4318);
+const pdvWindowTitle=(process.env.PDV_WINDOW_TITLE||'PDV-FISCAL').trim();
+const pdvWindowClass=(process.env.PDV_WINDOW_CLASS||'TFVendas').trim();
+const pdvLoginTitle=(process.env.PDV_LOGIN_TITLE||'CUPOM FISCAL').trim().toUpperCase();
+const pdvClosingTitle=(process.env.PDV_CLOSING_TITLE||'FECHAMENTO DE VENDA').trim().toUpperCase();
 const execFileAsync=promisify(execFile);
-const history=await createHistory(path.join(root,'data'));
+const historyDirectory=process.env.ROBOT_DATA_DIR?path.resolve(root,process.env.ROBOT_DATA_DIR):path.join(root,'data');
+const history=await createHistory(historyDirectory);
 const token=randomBytes(32).toString('hex');
 const app=express();
 app.disable('x-powered-by');
@@ -90,9 +95,9 @@ app.get('/api/pdv/status',async(req,res)=>{
   const script=path.join(root,'agent','inspect_pdv_win32.py');
   const {stdout}=await execFileAsync(process.env.PDV_PYTHON,[script,'--stdout'],{timeout:4000,windowsHide:true,maxBuffer:1024*1024});
   const inspection=JSON.parse(stdout);
-  const sales=inspection.windows.filter(window=>window.title==='PDV-FISCAL'&&window.class==='TFVendas');
-  const closing=inspection.windows.filter(window=>window.title.toUpperCase().includes('FECHAMENTO DE VENDA'));
-  const logins=inspection.windows.filter(window=>window.title.toUpperCase().includes('CUPOM FISCAL'));
+  const sales=inspection.windows.filter(window=>window.title===pdvWindowTitle&&window.class===pdvWindowClass);
+  const closing=inspection.windows.filter(window=>window.title.toUpperCase().includes(pdvClosingTitle));
+  const logins=inspection.windows.filter(window=>window.title.toUpperCase().includes(pdvLoginTitle));
   const required=['quantity','product_search','sale_price','line_total'];
   const roleCounts=sales.length===1?Object.fromEntries(required.map(role=>[role,sales[0].controls.filter(control=>control.role===role).length])):{};
   const bounds=sales.length===1?sales[0].rectangle:null;
@@ -180,8 +185,8 @@ app.post('/api/pdv/continue-sale',async(req,res)=>res.json(await exclusive(async
  const {stdout}=await execFileAsync(process.env.PDV_PYTHON,[script,'--stdout'],
   {timeout:8000,windowsHide:true,maxBuffer:1024*1024});
  const snapshot=JSON.parse(stdout);
- const sales=snapshot.windows.filter(window=>window.title==='PDV-FISCAL'&&window.class==='TFVendas');
- const closing=snapshot.windows.some(window=>window.title.toUpperCase().includes('FECHAMENTO DE VENDA'));
+ const sales=snapshot.windows.filter(window=>window.title===pdvWindowTitle&&window.class===pdvWindowClass);
+ const closing=snapshot.windows.some(window=>window.title.toUpperCase().includes(pdvClosingTitle));
  if(sales.length!==1||!sales[0].visible||sales[0].minimized||closing)
   throw new Error('A tela de venda não está única, visível ou livre do fechamento. Continuação bloqueada.');
  const sale=sales[0];

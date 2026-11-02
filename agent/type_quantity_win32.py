@@ -10,10 +10,11 @@ from ctypes import wintypes
 from inspect_pdv_win32 import inspect
 from pdv_geometry import require_safe_layout
 from restore_pdv_win32 import restore
+from pdv_config import PDV_WINDOW_TITLE, PDV_WINDOW_CLASS, is_closing_title
 
 
-SALE_TITLE = "PDV-FISCAL"
-SALE_CLASS = "TFVendas"
+SALE_TITLE = PDV_WINDOW_TITLE
+SALE_CLASS = PDV_WINDOW_CLASS
 def valid_quantity_text(value):
     value = str(value or "").strip()
     if value in {"", "0", "0,000", "0.000"}:
@@ -29,8 +30,7 @@ def sale_window(snapshot):
         raise RuntimeError("Não há uma única tela de venda; quantidade não alterada.")
     if sales[0].get("visible") is False or sales[0].get("minimized") is True:
         raise RuntimeError("A janela do PDV está oculta ou minimizada; quantidade não alterada.")
-    if any("FECHAMENTO DE VENDA" in window["title"].upper()
-           for window in snapshot["windows"]):
+    if any(is_closing_title(window["title"]) for window in snapshot["windows"]):
         raise RuntimeError("O fechamento da venda está aberto; quantidade não alterada.")
     return sales[0]
 

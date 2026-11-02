@@ -7,6 +7,7 @@ from ctypes import wintypes
 
 from inspect_pdv_win32 import inspect
 from pdv_geometry import require_safe_layout
+from pdv_config import is_sale_window, is_closing_title, PDV_CLOSING_TITLE
 
 
 def open_closing():
@@ -14,8 +15,7 @@ def open_closing():
         raise RuntimeError("Esta ação só funciona no Windows.")
 
     before = inspect()
-    sales = [window for window in before["windows"]
-             if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+    sales = [window for window in before["windows"] if is_sale_window(window)]
     if len(sales) != 1:
         raise RuntimeError("É necessário exatamente uma janela PDV-FISCAL; F6 não enviado.")
     require_safe_layout(sales[0])
@@ -25,8 +25,7 @@ def open_closing():
     if not activation.get("visible") or not activation.get("activated"):
         raise RuntimeError("A janela do PDV não ficou ativa; F6 não enviado.")
     before = inspect()
-    sales = [window for window in before["windows"]
-             if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+    sales = [window for window in before["windows"] if is_sale_window(window)]
     if len(sales) != 1:
         raise RuntimeError("A janela do PDV mudou durante a ativação; F6 não enviado.")
     require_safe_layout(sales[0])
@@ -106,7 +105,7 @@ def open_closing():
         time.sleep(0.15)
         refreshed = inspect()
         refreshed_sales = [window for window in refreshed["windows"]
-                           if window["title"] == "PDV-FISCAL" and window["class"] == "TFVendas"]
+                           if is_sale_window(window)]
         if len(refreshed_sales) != 1:
             raise RuntimeError("A janela do PDV mudou ao focar Produto; F6 não enviado.")
         sales = refreshed_sales
@@ -175,10 +174,9 @@ def open_closing():
     time.sleep(0.8)
     from pathlib import Path
     Path(__file__).with_name("capture-pdv.request").write_text(
-        "FECHAMENTO DE VENDA", encoding="utf-8")
+        PDV_CLOSING_TITLE, encoding="utf-8")
     after = inspect()
-    closing = [window for window in after["windows"]
-               if "FECHAMENTO DE VENDA" in window["title"].upper()]
+    closing = [window for window in after["windows"] if is_closing_title(window["title"])]
     if len(closing) != 1:
         raise RuntimeError(
             "F6 foi enviado ao PDV, mas a janela única de fechamento não foi detectada. "

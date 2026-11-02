@@ -8,6 +8,8 @@ O servidor usa os scripts deste diretório para localizar o PDV e, após autoriz
 - `launch_pdv_win32.py`: abre o PDV se ainda não estiver em execução. A autenticação continua sendo feita pelo operador no PDV.
 - `restore_pdv_win32.py`: traz a janela de venda para frente; não inclui produto nem envia pagamento.
 
+Os parâmetros locais do executável e da identificação de janelas ficam no `.env` da raiz (`PDV_EXE`, `PDV_PROCESS_NAME`, `PDV_WINDOW_TITLE`, `PDV_WINDOW_CLASS` e títulos de login/fechamento). `pdv_config.py` mantém os padrões da versão atualmente mapeada.
+
 ## Montagem assistida
 
 `build_sale_win32.py` é chamado pelo botão único **Lançar todos os itens no PDV**. Antes de qualquer entrada, verifica que há exatamente uma janela principal visível, que não há fechamento aberto e que quantidade, produto, preço e total estão no estado inicial. A caixa de confirmação exige que o operador confira manualmente que o cupom está vazio; a grade do PDV é desenhada pelo próprio aplicativo e não é legível com segurança pela ponte atual.
