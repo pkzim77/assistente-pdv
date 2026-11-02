@@ -215,7 +215,7 @@ app.post('/api/proposals',async(req,res)=>res.json(await exclusive(async()=>{
  const started=performance.now();const payment=req.body.payment;const candidateLimit=Number(req.body.candidateLimit??200);
  if(![100,200].includes(candidateLimit))throw new Error('Escolha 100 ou 200 candidatos.');
  if(!['PIX','CARD','MANUAL'].includes(payment))throw new Error('Forma de pagamento inválida.');
- const snapshot=await stockSnapshot();
+ const snapshot=await stockSnapshot({fresh:true});
  const proposal=await solver.solve(snapshot.rows,req.body.target,candidateLimit,snapshot.loadedAt);
  proposal.source='stock';proposal.snapshotAt=snapshot.loadedAt;proposal.requestedCandidateLimit=candidateLimit;
  proposal.responseMs=Math.round(performance.now()-started);
